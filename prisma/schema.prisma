@@ -18,8 +18,8 @@ model customer {
 
 model item {
   item_id    Int          @id @default(autoincrement())
-  item_name  String?
-  item_price Decimal?     @db.Decimal(8, 2)
+  item_name  String
+  item_price Decimal      @db.Decimal(8, 2)
   order_item order_item[]
 }
 
