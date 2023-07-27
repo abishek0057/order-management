@@ -4,13 +4,14 @@ const prisma = new PrismaClient();
 
 const addCustomer = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { name, phone = null, email = null, address = null } = req.body;
-    if (!name) {
+    const { id, name, phone = null, email = null, address = null } = req.body;
+    if (!name || !id) {
       res.status(400);
-      throw new Error("Please add customer name");
+      throw new Error("Please add customer name and id");
     }
     const result = await prisma.customer.create({
       data: {
+        customer_id: Number(id),
         customer_name: name,
         customer_phone: phone,
         customer_email: email,

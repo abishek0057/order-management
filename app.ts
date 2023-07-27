@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import errorHandler from "./middleware/errorHandler";
 import customerRouter from "./routes/customerRoutes";
 import itemRoutes from "./routes/itemRoutes";
+import orderRoutes from "./routes/orderRoutes";
 
 dotenv.config();
 
@@ -13,6 +14,7 @@ const port = process.env.PORT;
 
 app.use("/", customerRouter);
 app.use("/item", itemRoutes);
+app.use("/order", orderRoutes);
 app.use(errorHandler);
 
 app.listen(port, () => {
