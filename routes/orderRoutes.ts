@@ -8,6 +8,6 @@ const router = Router();
 
 router.post("/add", addOrder);
 router.get("/get/:status", getOrdersByStatus);
-router.put("/changestatus/:id", changeOrderStatus);
+router.put("/changestatus", changeOrderStatus);
 
 export default router;
