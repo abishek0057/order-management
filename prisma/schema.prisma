@@ -41,3 +41,10 @@ model orders {
   order_item   order_item[]
   customer     customer?    @relation(fields: [customer_id], references: [customer_id], onDelete: NoAction, onUpdate: NoAction)
 }
+
+model admins {
+  admin_id   Int     @id @default(autoincrement())
+  username   String  @db.VarChar(20)
+  passkey    String  @db.VarChar(20)
+  isLoggedIn Boolean
+}
