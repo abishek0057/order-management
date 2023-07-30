@@ -1,7 +1,13 @@
 import { Router } from "express";
-import { updateAdminCredentials, login } from "../controllers/adminController";
+import {
+  updateAdminCredentials,
+  login,
+  logout,
+} from "../controllers/adminController";
+import adminAuth from "../middleware/authMiddleware";
 const router = Router();
 
 router.post("/login", login);
-router.post("/changecredentials", updateAdminCredentials);
+router.get("/logout", logout);
+router.post("/changecredentials", adminAuth, updateAdminCredentials);
 export default router;

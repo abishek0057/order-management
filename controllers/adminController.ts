@@ -35,9 +35,37 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
           isLoggedIn: true,
         },
       });
+      res.status(200).json({ message: "Logged in successfully" });
     } else {
       res.status(400);
       throw new Error("Invalid username or password");
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+const logout = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const adminInfo = await prisma.admins.findUnique({
+      where: {
+        admin_id: 1,
+      },
+    });
+
+    if (adminInfo?.isLoggedIn) {
+      await prisma.admins.update({
+        where: {
+          admin_id: 1,
+        },
+        data: {
+          isLoggedIn: false,
+        },
+      });
+      res.status(200).json({ message: "Logout successful" });
+    } else {
+      res.status(400);
+      throw new Error("You are already logged out.");
     }
   } catch (error) {
     next(error);
@@ -56,23 +84,68 @@ const updateAdminCredentials = async (
         admin_id: 1,
       },
     });
-    if (oldPassword === adminInfo?.passkey || username) {
+
+    if (!adminInfo) {
+      res.status(404);
+      throw new Error("Admin not found");
+    }
+
+    if (username && oldPassword && password) {
+      if (oldPassword !== adminInfo.passkey) {
+        res.status(400);
+        throw new Error("Incorrect old password");
+      }
+
       await prisma.admins.update({
         where: {
           admin_id: 1,
         },
         data: {
-          username: username || adminInfo?.username,
-          passkey: password || adminInfo?.passkey,
+          username,
+          passkey: password,
+          isLoggedIn: false,
         },
       });
+
+      res
+        .status(200)
+        .json({ message: "Username and password changed successfully" });
+    } else if (username && !oldPassword && !password) {
+      await prisma.admins.update({
+        where: {
+          admin_id: 1,
+        },
+        data: {
+          username,
+          isLoggedIn: false,
+        },
+      });
+
+      res.status(200).json({ message: "Username changed successfully" });
+    } else if (!username && oldPassword && password) {
+      if (oldPassword !== adminInfo.passkey) {
+        res.status(400);
+        throw new Error("Incorrect old password");
+      }
+
+      await prisma.admins.update({
+        where: {
+          admin_id: 1,
+        },
+        data: {
+          passkey: password,
+          isLoggedIn: false,
+        },
+      });
+
+      res.status(200).json({ message: "Password changed successfully" });
     } else {
       res.status(400);
-      throw new Error("changing credentials failed");
+      throw new Error("Invalid combination of parameters provided");
     }
   } catch (error) {
     next(error);
   }
 };
 
-export { updateAdminCredentials, login };
+export { updateAdminCredentials, login, logout };
