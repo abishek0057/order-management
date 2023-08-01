@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { PrismaClient } from "@prisma/client";
+import { hashPassword } from "../utils/password";
 const prisma = new PrismaClient();
 
 type RequestItem = {
@@ -27,6 +28,15 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
     });
 
     if (adminInfo?.username === username && adminInfo?.passkey === password) {
+      const namePass = `${adminInfo?.username ?? ""}${adminInfo?.passkey ?? ""}`
+      const token = await hashPassword(namePass)
+      res.cookie("token", token, {
+        path: "/",
+        httpOnly: true,
+        expires: new Date(Date.now() + 1000 * 86400),
+        sameSite: "none",
+        secure: true,
+      })
       await prisma.admins.update({
         where: {
           admin_id: 1,
@@ -54,6 +64,13 @@ const logout = async (req: Request, res: Response, next: NextFunction) => {
     });
 
     if (adminInfo?.isLoggedIn) {
+      res.cookie("token", "", {
+        path: "/",
+        httpOnly: true,
+        expires: new Date(Date.now()),
+        sameSite: "none",
+        secure: true,
+      })
       await prisma.admins.update({
         where: {
           admin_id: 1,

@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
 import errorHandler from "./middleware/errorHandler";
 import customerRouter from "./routes/customerRoutes";
 import itemRoutes from "./routes/itemRoutes";
@@ -9,6 +10,7 @@ import adminRoutes from "./routes/adminRoutes";
 dotenv.config();
 
 const app = express();
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 const port = process.env.PORT;

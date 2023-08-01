@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { PrismaClient } from "@prisma/client";
+import { validatePassword } from "../utils/password";
 const prisma = new PrismaClient();
 
 type RequestItem = {
@@ -29,13 +30,21 @@ const adminAuth = async (req: Request, res: Response, next: NextFunction) => {
         admin_id: 1,
       },
     });
-    if (loggedinInfo?.isLoggedIn) {
-      req.user = loggedinInfo;
+    const token = req.cookies.token;    
+    
+    if (!token) {
+      res.status(401);
+      throw new Error("Not authorized, please login");
+    }
+    const namePass = `${loggedinInfo?.username ?? ""}${loggedinInfo?.passkey ?? ""}`    
+    const isValidToken = await validatePassword(namePass, token)
+    if (isValidToken) {
+      req.user = loggedinInfo as AdminInfo;
       next();
     } else {
       res.status(401).json({ error: "Unauthorized" });
     }
-  } catch (error) {
+  } catch (error) {    
     next(error);
   }
 };
