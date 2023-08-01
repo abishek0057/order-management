@@ -4,7 +4,8 @@ const saltRound = 10;
 
 const hashPassword = async (password: string): Promise<string> => {
   try {
-    return await bcrypt.hash(password, saltRound);
+    const salt = await bcrypt.genSalt(saltRound)
+    return await bcrypt.hash(password, salt);
   } catch (err) {
     throw new Error("Error hashing password");
   }
