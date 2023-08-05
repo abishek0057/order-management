@@ -43,6 +43,7 @@ const getItem = async (req: Request, res: Response, next: NextFunction) => {
 const addItem = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { name, price }: ItemRequest = req.body;
+    const path: string = req.file?.path ?? "";
     if (!name && !price) {
       res.status(400);
       throw new Error("Please add item name and price");
@@ -51,6 +52,7 @@ const addItem = async (req: Request, res: Response, next: NextFunction) => {
       data: {
         item_name: name,
         item_price: price,
+        item_image: path,
       },
     });
     res.status(201).json({ item: result });

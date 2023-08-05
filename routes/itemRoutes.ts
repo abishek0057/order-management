@@ -8,10 +8,11 @@ import {
   deleteItem,
 } from "../controllers/itemController";
 import adminAuth from "../middleware/authMiddleware";
+import { upload } from "../utils/fileUpload";
 
 router.get("/", adminAuth, getAllItems);
 router.get("/:id", adminAuth, getItem);
-router.post("/additem", adminAuth, addItem);
+router.post("/additem", adminAuth, upload, addItem);
 router.patch("/updateitem/:id", adminAuth, updateItem);
 router.delete("/delete/:id", adminAuth, deleteItem);
 
