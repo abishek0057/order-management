@@ -13,7 +13,7 @@ import { upload } from "../utils/fileUpload";
 router.get("/", adminAuth, getAllItems);
 router.get("/:id", adminAuth, getItem);
 router.post("/additem", adminAuth, upload, addItem);
-router.patch("/updateitem/:id", adminAuth, updateItem);
+router.patch("/updateitem/:id", adminAuth, upload, updateItem);
 router.delete("/delete/:id", adminAuth, deleteItem);
 
 export default router;

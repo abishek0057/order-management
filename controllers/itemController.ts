@@ -44,7 +44,7 @@ const addItem = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { name, price }: ItemRequest = req.body;
     const path: string = req.file?.path ?? "";
-    if (!name && !price) {
+    if (!name || !price) {
       res.status(400);
       throw new Error("Please add item name and price");
     }
@@ -65,6 +65,11 @@ const updateItem = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
     const { name, price }: ItemRequest = req.body;
+    const imagePath: string | undefined = req.file?.path;
+    if (!name || !price) {
+      res.status(400);
+      throw new Error("Please add item name and price");
+    }
     const updatedItem = await prisma.item.update({
       where: {
         item_id: Number(id),
@@ -72,6 +77,7 @@ const updateItem = async (req: Request, res: Response, next: NextFunction) => {
       data: {
         item_name: name,
         item_price: price,
+        item_image: imagePath,
       },
     });
     res.status(200).json({ updatedItem });
