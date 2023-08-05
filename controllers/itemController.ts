@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { PrismaClient } from "@prisma/client";
+import deleteFile from "../utils/fileDelete";
 const prisma = new PrismaClient();
 
 type ItemRequest = {
@@ -93,13 +94,14 @@ const deleteItem = async (req: Request, res: Response, next: NextFunction) => {
       res.status(400);
       throw new Error("Id should be number");
     }
-    const userExist = await prisma.item.findUnique({
+    const itemExist = await prisma.item.findUnique({
       where: { item_id: Number(id) },
     });
-    if (userExist) {
+    if (itemExist) {
       const deleteItem = await prisma.item.delete({
         where: { item_id: Number(id) },
       });
+      if (itemExist.item_image) deleteFile(itemExist.item_image);
       res.status(201).json({ item: deleteItem });
     } else {
       res.status(404);
