@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import { PrismaClient } from "@prisma/client";
 import { formatOutput } from "../utils/formattedOutput";
+import { io } from "../app";
+import { getLatestOrder } from "../utils/getLatestOrder";
 const prisma = new PrismaClient();
 
 type ItemRequest = {
@@ -38,6 +40,8 @@ const addOrder = async (req: Request, res: Response, next: NextFunction) => {
       }
     }
     res.status(201).json({ customer: order });
+    const latestOrder = formatOutput(await getLatestOrder(prisma, customerId));
+    io.emit("order", { latestOrder });
   } catch (error) {
     next(error);
   }
