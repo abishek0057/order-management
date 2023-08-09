@@ -6,7 +6,7 @@ import customerRouter from "./routes/customerRoutes";
 import itemRoutes from "./routes/itemRoutes";
 import orderRoutes from "./routes/orderRoutes";
 import adminRoutes from "./routes/adminRoutes";
-
+import { initializeSocket } from "./utils/socket";
 dotenv.config();
 
 const app = express();
@@ -22,6 +22,8 @@ app.use("/item", itemRoutes);
 app.use("/order", orderRoutes);
 app.use(errorHandler);
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`Server is running at port ${port}`);
 });
+
+export const io = initializeSocket(server);
