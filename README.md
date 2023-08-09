@@ -29,7 +29,8 @@ It supports the following functionalities:
 | `/order/get/:status`   | GET    | Retrieve orders based on their status.          | N/A                                                    | "status" should be one of: "pending," "complete," or "canceled." |
 | `/order/changestatus`  | PUT    | Update the status of an order by ID.           | ```{ "id": "250", "status": "complete" }```         | should use "order_id" generated while adding order    |
 
-
+## Receiving New Order Notifications with socket.io-client
+> To stay updated on new orders in real-time, you can listen for the "order" event using socket.io-client. This allows your client application to receive notifications whenever a new order is placed without having to constantly poll the server for updates.
 ## Database Schema
 ![](https://pbs.twimg.com/media/F2TEfIPW0AARVzo?format=png&name=large)
 
