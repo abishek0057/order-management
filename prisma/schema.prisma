@@ -34,13 +34,13 @@ model order_item {
 }
 
 model orders {
-  order_id     Int          @id @default(autoincrement())
-  created_at   DateTime     @default(now()) @db.Timestamptz(6)
-  total_amount Decimal?     @db.Decimal(9, 2)
-  order_status String?      @db.VarChar(10)
+  order_id     Int           @id @default(autoincrement())
+  created_at   DateTime      @default(now()) @db.Timestamptz(6)
+  total_amount Decimal?      @db.Decimal(9, 2)
+  order_status order_status?
   customer_id  Int?
   order_item   order_item[]
-  customer     customer?    @relation(fields: [customer_id], references: [customer_id], onDelete: NoAction, onUpdate: NoAction)
+  customer     customer?     @relation(fields: [customer_id], references: [customer_id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model admins {
@@ -48,4 +48,10 @@ model admins {
   username   String  @db.VarChar(20)
   passkey    String  @db.VarChar(20)
   isLoggedIn Boolean
+}
+
+enum order_status {
+  pending
+  complete
+  canceled
 }
