@@ -5,8 +5,10 @@ import { io } from "../app";
 import { getLatestOrder } from "../utils/getLatestOrder";
 const prisma = new PrismaClient();
 
+type OrderStatus = "pending" | "complete" | "canceled";
+
 type ItemRequest = {
-  orderStatus: string;
+  orderStatus: OrderStatus;
   totalAmount: number;
   customerId: number;
   orderItems: Array<{
@@ -83,7 +85,7 @@ const getOrdersByStatus = async (
         },
       },
       where: {
-        order_status: status,
+        order_status: status as OrderStatus,
       },
       orderBy: {
         created_at: "asc",
@@ -108,7 +110,7 @@ const changeOrderStatus = async (
         order_id: Number(id),
       },
       data: {
-        order_status: status,
+        order_status: status as OrderStatus,
       },
     });
     res.status(200).json({ updatedItem });
