@@ -105,7 +105,6 @@ const getOrdersByOrderId = async (
 ) => {
   try {
     const { orderId }: { orderId?: number } = req.params;
-    console.log(typeof orderId);
     if (Number(orderId) <= 1) {
       res.status(400);
       throw new Error("Please provide customer Id");
