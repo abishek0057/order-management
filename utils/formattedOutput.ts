@@ -25,4 +25,17 @@ function formatOutput(originalOutput: any[]): any[] {
   return formattedOutput;
 }
 
-export { formatOutput };
+const formattedSingleOrder = (order: any): any => {
+  const { order_item, ...rest } = order;
+  const orderItem = order_item.map((item: any) => ({
+    ...item.item,
+    quality: item.quantity,
+  }));
+
+  return {
+    ...rest,
+    orderItem,
+  };
+};
+
+export { formatOutput, formattedSingleOrder };
