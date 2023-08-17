@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { PrismaClient } from "@prisma/client";
-import { formatOutput } from "../utils/formattedOutput";
+import { formatOutput, formattedSingleOrder } from "../utils/formattedOutput";
 import { io } from "../app";
 import { getLatestOrder } from "../utils/getLatestOrder";
 const prisma = new PrismaClient();
@@ -110,37 +110,39 @@ const getOrdersByOrderId = async (
       res.status(400);
       throw new Error("Please provide customer Id");
     }
-    const order =
-      (await prisma.orders.findUnique({
-        where: {
-          order_id: Number(orderId),
-        },
-        select: {
-          customer: {
-            select: {
-              customer_id: true,
-              customer_name: true,
-            },
+    const order = await prisma.orders.findUnique({
+      where: {
+        order_id: Number(orderId),
+      },
+      select: {
+        customer: {
+          select: {
+            customer_id: true,
+            customer_name: true,
           },
-          order_id: true,
-          created_at: true,
-          total_amount: true,
-          order_status: true,
-          order_item: {
-            select: {
-              item: {
-                select: {
-                  item_name: true,
-                  item_price: true,
-                },
+        },
+        order_id: true,
+        created_at: true,
+        total_amount: true,
+        order_status: true,
+        order_item: {
+          select: {
+            item: {
+              select: {
+                item_name: true,
+                item_price: true,
               },
-              quantity: true,
             },
+            quantity: true,
           },
         },
-      })) ?? [];
-
-    res.status(200).json({ order });
+      },
+    });
+    let formattedOrder = {};
+    if (order) {
+      formattedOrder = formattedSingleOrder(order);
+    }
+    res.status(200).json({ order: formattedOrder });
   } catch (error) {
     next(error);
   }
