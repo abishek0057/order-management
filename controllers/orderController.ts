@@ -98,6 +98,54 @@ const getOrdersByStatus = async (
   }
 };
 
+const getOrdersByOrderId = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { orderId }: { orderId?: number } = req.params;
+    console.log(typeof orderId);
+    if (Number(orderId) <= 1) {
+      res.status(400);
+      throw new Error("Please provide customer Id");
+    }
+    const order =
+      (await prisma.orders.findUnique({
+        where: {
+          order_id: Number(orderId),
+        },
+        select: {
+          customer: {
+            select: {
+              customer_id: true,
+              customer_name: true,
+            },
+          },
+          order_id: true,
+          created_at: true,
+          total_amount: true,
+          order_status: true,
+          order_item: {
+            select: {
+              item: {
+                select: {
+                  item_name: true,
+                  item_price: true,
+                },
+              },
+              quantity: true,
+            },
+          },
+        },
+      })) ?? [];
+
+    res.status(200).json({ order });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const changeOrderStatus = async (
   req: Request,
   res: Response,
@@ -119,4 +167,4 @@ const changeOrderStatus = async (
   }
 };
 
-export { addOrder, getOrdersByStatus, changeOrderStatus };
+export { addOrder, getOrdersByStatus, changeOrderStatus, getOrdersByOrderId };
