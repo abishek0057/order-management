@@ -26,7 +26,8 @@ It supports the following functionalities:
 | `/item/updateitem/:id` | PATCH  | Update an existing menu item by ID.             | ```{ "name": "New Burger Name", "price": 12.99, image: "image file" }``` | N/A                                                  |
 | `/item/delete/:id`     | DELETE | Delete a menu item by ID.                       | N/A                                                    | N/A                                                  |
 | `/order/add`           | POST   | Place a new order with selected items and quantities. | ```{ "customerId": 121, "totalAmount": 500, "orderStatus": "pending", "orderItems": [ { "itemId": 1, "quantity": 2 }, { "itemId": 3, "quantity": 1 } ] }``` | "status" should be one of: "pending," "complete," or "canceled." |
-| `/order/get/:status`   | GET    | Retrieve orders based on their status.          | N/A                                                    | "status" should be one of: "pending," "complete," or "canceled." |
+| `/order/get/:status`   | GET    | Retrieve orders based on their status.          | N/A                                                | "status" should be one of: "pending," "complete," or "canceled." |
+| `/order/get/orderid/:orderId`   | GET    | Retrieve orders based on order ID.          |N/A| N/A |
 | `/order/changestatus`  | PUT    | Update the status of an order by ID.           | ```{ "id": "250", "status": "complete" }```         | should use "order_id" generated while adding order    |
 
 ## Receiving New Order Notifications with socket.io-client
